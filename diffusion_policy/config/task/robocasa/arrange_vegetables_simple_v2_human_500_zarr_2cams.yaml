@@ -43,7 +43,8 @@ env_runner:
   abs_action: *abs_action
   tqdm_interval_sec: 1.0
   n_envs: 1
-  # env_kwargs:
+  env_kwargs:
+    seed: 1111111
   #   obj_instance_split: 'B'
   #   obj_groups: ["banana"]
 # evaluation at this config requires a 16 core 64GB instance.

@@ -49,6 +49,7 @@ env_runner:
   tqdm_interval_sec: 1.0
   n_envs: 1
   env_kwargs:
+    seed: 1111111
     obj_instance_split: 'B'
     generative_textures: null
     randomize_cameras: False

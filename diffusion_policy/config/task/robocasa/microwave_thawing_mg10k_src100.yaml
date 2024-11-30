@@ -1,4 +1,4 @@
-name: microwave_thawing_mg1k
+name: microwave_thawing_mg10k_src100
 
 shape_meta: &shape_meta
   # acceptable types: rgb, low_dim
@@ -21,7 +21,7 @@ shape_meta: &shape_meta
   action: 
     shape: [12]
 
-dataset_path: &dataset_path /data1/aaronl/generated/microwave_thawing/demo_im128.hdf5
+dataset_path: &dataset_path /data1/aaronl/expdata/mg/2024-11-18-21-43-32/demo_im128.hdf5
 
 abs_action: &abs_action False
 
@@ -36,7 +36,7 @@ env_runner:
   n_test: 50
   n_test_vis: 4
   test_start_seed: 100000
-  max_steps: 1000
+  max_steps: 1600
   n_obs_steps: ${n_obs_steps}
   n_action_steps: ${n_action_steps}
   render_obs_key: 'robot0_agentview_right_image'
