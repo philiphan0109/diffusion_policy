@@ -25,6 +25,8 @@ shape_meta: &shape_meta
 
 dataset_paths: &dataset_paths [
   # human demos
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToCabinet/20250712/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseStandMixerHead/20250711/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/AdjustToasterOvenTemperature/20250714/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseCabinet/20250711/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseDishwasher/20250711/demo_im128.hdf5',
@@ -33,7 +35,6 @@ dataset_paths: &dataset_paths [
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseFridge/20250711/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseMicrowave/20250712/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseOven/20250711/demo_im128.hdf5',
-  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseStandMixerHead/20250711/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseToasterOvenDoor/20250714/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CoffeeServeMug/20250711/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CoffeeSetupMug/20250711/demo_im128.hdf5',
@@ -47,7 +48,6 @@ dataset_paths: &dataset_paths [
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenStandMixerHead/20250711/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenToasterOvenDoor/20250714/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCabinetToCounter/20250711/demo_im128.hdf5',
-  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToCabinet/20250712/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToMicrowave/20250712/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToOven/20250714/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToSink/20250711/demo_im128.hdf5',
@@ -76,16 +76,16 @@ abs_action: &abs_action False
 
 env_runner:
   _target_: diffusion_policy.env_runner.robomimic_image_runner.RobomimicImageRunner
-  dataset_path: /mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseStandMixerHead/20250711/demo_im128.hdf5
+  dataset_path: /mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToCabinet/20250712/demo_im128.hdf5
   shape_meta: *shape_meta
   # costs 1GB per env
-  n_train: 1
+  n_train: 0
   n_train_vis: 1
   train_start_idx: 0
   n_test: 50
   n_test_vis: 4
   test_start_seed: 100000
-  max_steps: 500
+  max_steps: 800
   n_obs_steps: ${n_obs_steps}
   n_action_steps: ${n_action_steps}
   render_obs_key: 'robot0_agentview_right_image'

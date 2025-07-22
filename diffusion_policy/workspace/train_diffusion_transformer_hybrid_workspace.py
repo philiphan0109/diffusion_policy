@@ -84,6 +84,7 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                 dataloader_cfg["shuffle"] = False
                 print("using custom dataloader sampler")
         train_dataloader = DataLoader(dataset, **dataloader_cfg)
+        train_dataloader_iter = iter(train_dataloader)
         normalizer = dataset.get_normalizer()
 
         # configure validation dataset
@@ -170,54 +171,63 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                 step_log = dict()
                 # ========= train for this epoch ==========
                 train_losses = list()
-                max_train_steps = cfg.training.max_train_steps
-                tqdm_kwargs = {}
-                if max_train_steps is not None:
-                    tqdm_kwargs["total"] = max_train_steps
-                with tqdm.tqdm(train_dataloader, desc=f"Training epoch {self.epoch}", 
-                        leave=False, mininterval=cfg.training.tqdm_interval_sec, **tqdm_kwargs) as tepoch:
-                    for batch_idx, batch in enumerate(tepoch):
-                        # device transfer
-                        batch = dict_apply(batch, lambda x: x.to(device, non_blocking=True))
-                        if train_sampling_batch is None:
-                            train_sampling_batch = batch
+                # max_train_steps = cfg.training.max_train_steps
+                # tqdm_kwargs = {}
+                # if max_train_steps is not None:
+                #     tqdm_kwargs["total"] = max_train_steps
+                # with tqdm.tqdm(train_dataloader, desc=f"Training epoch {self.epoch}", 
+                #         leave=False, mininterval=cfg.training.tqdm_interval_sec, **tqdm_kwargs) as tepoch:
+                #     for batch_idx, batch in enumerate(tepoch):
 
-                        # compute loss
-                        raw_loss = self.model.compute_loss(batch)
-                        loss = raw_loss / cfg.training.gradient_accumulate_every
-                        loss.backward()
+                assert cfg.training.max_train_steps is not None
+                for batch_idx in tqdm.tqdm(range(cfg.training.max_train_steps), desc=f"Training epoch {self.epoch}", leave=False, mininterval=cfg.training.tqdm_interval_sec):
+                    try:
+                        batch = next(train_dataloader_iter)
+                    except StopIteration:
+                        # reset for next dataset pass
+                        train_dataloader_iter = iter(train_dataloader)
+                        batch = next(train_dataloader_iter)
+                    # device transfer
+                    batch = dict_apply(batch, lambda x: x.to(device, non_blocking=True))
+                    if train_sampling_batch is None:
+                        train_sampling_batch = batch
 
-                        # step optimizer
-                        if self.global_step % cfg.training.gradient_accumulate_every == 0:
-                            self.optimizer.step()
-                            self.optimizer.zero_grad()
-                            lr_scheduler.step()
-                        
-                        # update ema
-                        if cfg.training.use_ema:
-                            ema.step(self.model)
+                    # compute loss
+                    raw_loss = self.model.compute_loss(batch)
+                    loss = raw_loss / cfg.training.gradient_accumulate_every
+                    loss.backward()
 
-                        # logging
-                        raw_loss_cpu = raw_loss.item()
-                        tepoch.set_postfix(loss=raw_loss_cpu, refresh=False)
-                        train_losses.append(raw_loss_cpu)
-                        step_log = {
-                            'train_loss': raw_loss_cpu,
-                            'global_step': self.global_step,
-                            'epoch': self.epoch,
-                            'lr': lr_scheduler.get_last_lr()[0]
-                        }
+                    # step optimizer
+                    if self.global_step % cfg.training.gradient_accumulate_every == 0:
+                        self.optimizer.step()
+                        self.optimizer.zero_grad()
+                        lr_scheduler.step()
+                    
+                    # update ema
+                    if cfg.training.use_ema:
+                        ema.step(self.model)
 
-                        is_last_batch = (batch_idx == (len(train_dataloader)-1))
-                        if not is_last_batch:
-                            # log of last step is combined with validation and rollout
-                            wandb_run.log(step_log, step=self.global_step)
-                            json_logger.log(step_log)
-                            self.global_step += 1
+                    # logging
+                    raw_loss_cpu = raw_loss.item()
+                    # tepoch.set_postfix(loss=raw_loss_cpu, refresh=False)
+                    train_losses.append(raw_loss_cpu)
+                    step_log = {
+                        'train_loss': raw_loss_cpu,
+                        'global_step': self.global_step,
+                        'epoch': self.epoch,
+                        'lr': lr_scheduler.get_last_lr()[0]
+                    }
 
-                        if (cfg.training.max_train_steps is not None) \
-                            and batch_idx >= (cfg.training.max_train_steps-1):
-                            break
+                    is_last_batch = (batch_idx == (len(train_dataloader)-1))
+                    if not is_last_batch:
+                        # log of last step is combined with validation and rollout
+                        wandb_run.log(step_log, step=self.global_step)
+                        json_logger.log(step_log)
+                        self.global_step += 1
+
+                    # if (cfg.training.max_train_steps is not None) \
+                    #     and batch_idx >= (cfg.training.max_train_steps-1):
+                    #     break
 
                 # at the end of each epoch
                 # replace train_loss with epoch average

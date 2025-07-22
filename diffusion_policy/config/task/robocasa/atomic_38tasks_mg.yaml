@@ -1,4 +1,4 @@
-name: atomic_17tasks_mg
+name: atomic_38tasks_mg
 
 shape_meta: &shape_meta
   # acceptable types: rgb, low_dim
@@ -25,39 +25,60 @@ shape_meta: &shape_meta
 
 dataset_paths: &dataset_paths [
   # mg-1k demos
-  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseStandMixerHead/mg/demo/2025-07-12-14-59-28/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToCabinet/mg/demo/2025-07-15-19-24-59/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToSink/mg/demo/2025-07-12-15-02-36/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/StartCoffeeMachine/mg/demo/2025-07-11-18-31-31/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOffStove/mg/demo/2025-07-11-18-29-00/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenDishwasher/mg/demo/2025-07-12-15-00-12/demo_im128.hdf5',
-  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseDishwasher/mg/demo/2025-07-14-21-13-52/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOnSinkFaucet/mg/demo/2025-07-14-15-30-37/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseDishwasher/mg/demo/2025-07-14-21-13-52/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnSinkSpout/mg/demo/2025-07-14-16-38-26/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CoffeeSetupMug/mg/demo/2025-07-15-19-25-48/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenStandMixerHead/mg/demo/2025-07-14-21-14-03/demo_im128.hdf5',
-  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenOven/mg/demo/2025-07-13-19-13-07/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPStoveToCounter/mg/demo/2025-07-15-12-20-34/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseStandMixerHead/mg/demo/2025-07-12-14-59-28/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOnMicrowave/mg/demo/2025-07-14-14-45-53/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenOven/mg/demo/2025-07-13-19-13-07/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToStandMixer/mg/demo/2025-07-13-19-10-48/demo_im128.hdf5',
-  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToCabinet/mg/demo/2025-07-15-19-24-59/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseMicrowave/mg/demo/2025-07-15-14-37-52/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOffSinkFaucet/mg/demo/2025-07-14-16-38-56/demo_im128.hdf5',
   '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToStove/mg/demo/2025-07-13-19-12-04/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOffMicrowave/mg/demo/2025-07-16-01-02-52/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseOven/mg/demo/2025-07-16-01-04-44/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToMicrowave/mg/demo/2025-07-15-19-14-49/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseElectricKettleLid/mg/demo/2025-07-17-00-58-24/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOnElectricKettle/mg/demo/2025-07-16-18-16-21/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CoffeeServeMug/mg/demo/2025-07-17-01-00-52/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenMicrowave/mg/demo/2025-07-15-12-07-46/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenToasterOvenDoor/mg/demo/2025-07-16-06-43-12/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenElectricKettleLid/mg/demo/2025-07-16-17-57-23/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPSinkToCounter/mg/demo/2025-07-17-16-13-25/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPToasterOvenToCounter/mg/demo/2025-07-17-01-00-50/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseDrawer/mg/demo/2025-07-15-23-08-21/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToToasterOven/mg/demo/2025-07-16-10-01-13/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCabinetToCounter/mg/demo/2025-07-16-10-47-20/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOnToasterOven/mg/demo/2025-07-17-00-47-20/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/TurnOnStove/mg/demo/2025-07-17-10-34-55/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/OpenDrawer/mg/demo/2025-07-16-09-53-11/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPMicrowaveToCounter/mg/demo/2025-07-16-23-41-43/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/AdjustToasterOvenTemperature/mg/demo/2025-07-16-18-16-56/demo_im128.hdf5',
+  '/mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToOven/mg/demo/2025-07-16-10-40-51/demo_im128.hdf5',
 ]
 
 abs_action: &abs_action False
 
 env_runner:
   _target_: diffusion_policy.env_runner.robomimic_image_runner.RobomimicImageRunner
-  dataset_path: /mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/CloseStandMixerHead/mg/demo/2025-07-12-14-59-28/demo_im128.hdf5
+  dataset_path: /mnt/nfs_client/robocasa/datasets/v0.5/train/atomic/PnPCounterToCabinet/mg/demo/2025-07-15-19-24-59/demo_im128.hdf5
   shape_meta: *shape_meta
   # costs 1GB per env
-  n_train: 1
+  n_train: 0
   n_train_vis: 1
   train_start_idx: 0
   n_test: 50
   n_test_vis: 4
   test_start_seed: 100000
-  max_steps: 500
+  max_steps: 800
   n_obs_steps: ${n_obs_steps}
   n_action_steps: ${n_action_steps}
   render_obs_key: 'robot0_agentview_right_image'

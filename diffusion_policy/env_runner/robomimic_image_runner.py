@@ -331,7 +331,9 @@ class RobomimicImageRunner(BaseImageRunner):
                 # # Concatenate along the last axis (axis=-1)
                 # env_action = np.concatenate([env_action, base_ac_expanded], axis=-1)
                 obs, reward, done, info = env.step(env_action)
-                done = np.all(done)
+                # done = np.all(done)
+                # for robocasa switch to the proper success check
+                done = np.all(done) or np.all([this_info["is_success"][0]["task"] for this_info in info])
                 past_action = action
 
                 # update pbar

@@ -277,8 +277,9 @@ class RobomimicCotrainingHDF5ImageDataset(MetaDataset, BaseImageDataset):
             use_cache=False,
             seed=42,
             val_ratio=0.0, # validation not implemented yet
-            # filter_key=None,
+            filter_key=None,
             action_keys=('actions',), # assumes that all datasets in the cotraining mixture use the same action keys
+            normalize_weights_by_ds_size=False,
         ):
 
         self.datasets = [
@@ -297,6 +298,7 @@ class RobomimicCotrainingHDF5ImageDataset(MetaDataset, BaseImageDataset):
                 # dont validate on sim since we doing real world downstream!
                 val_ratio=0,
                 action_keys=action_keys,
+                filter_key=filter_key,
             ) for dataset_path in dataset_paths
         ]
         self.lowdim_keys = self.datasets[0].lowdim_keys
@@ -304,7 +306,7 @@ class RobomimicCotrainingHDF5ImageDataset(MetaDataset, BaseImageDataset):
         self.abs_action = abs_action
         self.ds_weights = [1/len(self.datasets)]*len(self.datasets)
         self.action_keys = action_keys
-        MetaDataset.__init__(self, datasets=self.datasets, ds_weights=self.ds_weights, normalize_weights_by_ds_size=True)
+        MetaDataset.__init__(self, datasets=self.datasets, ds_weights=self.ds_weights, normalize_weights_by_ds_size=normalize_weights_by_ds_size)
 
     def get_validation_dataset(self):
         # if val ratio is not 0, then use the real dataset for validation since that is our downstream setting
