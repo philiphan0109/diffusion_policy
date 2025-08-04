@@ -71,6 +71,7 @@ class LerobotDataset(LeRobotSingleDataset, BaseImageDataset):
         assert not self.abs_action, "abs_action is not supported in LerobotDataset"
         dataset_path = pathlib.Path(dataset_path)
         delta_indices = list(range(-n_obs_steps+1, horizon - n_obs_steps + 1))
+        delta_indices_obs = list(range(-n_obs_steps+1, 1))
         modality_keys_dict = get_modality_keys(dataset_path)
         video_modality_keys = modality_keys_dict["video"]
         language_modality_keys = modality_keys_dict["annotation"]
@@ -79,11 +80,11 @@ class LerobotDataset(LeRobotSingleDataset, BaseImageDataset):
         state_modality_keys = [key for key in state_modality_keys if key != "state.dummy_tensor"]
         modality_configs = {
             "video": ModalityConfig(
-                delta_indices=delta_indices,
+                delta_indices=delta_indices_obs,
                 modality_keys=video_modality_keys,  # we will include all video modalities
             ),
             "state": ModalityConfig(
-                delta_indices=delta_indices,
+                delta_indices=delta_indices_obs,
                 modality_keys=state_modality_keys,
             ),
             "action": ModalityConfig(
