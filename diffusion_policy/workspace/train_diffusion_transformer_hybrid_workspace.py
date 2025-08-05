@@ -34,6 +34,7 @@ from accelerate import DistributedDataParallelKwargs
 from accelerate.utils import broadcast_object_list
 from accelerate.utils import InitProcessGroupKwargs
 from datetime import timedelta
+import time
 
 # hide wandb warnings
 import logging
@@ -238,8 +239,11 @@ class TrainDiffusionTransformerHybridWorkspace(BaseWorkspace):
                         batch = next(train_dataloader_iter)
                     except StopIteration:
                         # reset for next dataset pass
+                        t1 = time.time()
+                        print("Creating new train dataloader iterator")
                         train_dataloader_iter = iter(train_dataloader)
                         batch = next(train_dataloader_iter)
+                        print(f"Done after {time.time() - t1} seconds.")
                     # device transfer
                     batch = dict_apply(batch, lambda x: x.to(device, non_blocking=True))
                     if train_sampling_batch is None:
