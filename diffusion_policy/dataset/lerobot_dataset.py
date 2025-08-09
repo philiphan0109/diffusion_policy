@@ -274,9 +274,8 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
             use_cache=False,
             seed=42,
             val_ratio=0.0, # validation not implemented yet,
-            ds_weights = None,
-            balance_dataset_weights=False,
-            balance_trajectory_weights=False,
+            ds_weights=None,
+            ds_weights_alpha=0.0,
             metadata_config: dict = {
             "percentile_mixing_method": "weighted_average",
         } 
@@ -306,8 +305,13 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
         assert not self.abs_action, "abs_action is not supported in LerobotCotrainingDataset"
         assert not ds_weights or len(ds_weights) == len(datasets), \
             f"ds_weights length {len(ds_weights)} != datasets length {len(datasets)}"
-        dataset_mixture = [(ds, 1.0) for ds in datasets] if ds_weights is None else list(zip(datasets, ds_weights))
-        LeRobotMixtureDataset.__init__(self,  data_mixture=dataset_mixture, mode="train",  balance_dataset_weights=balance_dataset_weights, balance_trajectory_weights=balance_trajectory_weights, metadata_config=metadata_config)
+        if not ds_weights:
+            ds_weights = np.array([np.power(len(dataset), ds_weights_alpha) for dataset in datasets])
+            # the groot dataloader requires that at least one dataset has weight 1.0
+            ds_weights = ds_weights / ds_weights[0]
+        dataset_mixture = list(zip(datasets, ds_weights))
+        # set balance_dataset_weights to False, since we are calculating weights ourselves
+        LeRobotMixtureDataset.__init__(self,  data_mixture=dataset_mixture, mode="train",  balance_dataset_weights=False, balance_trajectory_weights=False, metadata_config=metadata_config)
         rgb_keys = dict()
         lowdim_keys = dict()
         obs_shape_meta = copy.deepcopy(shape_meta['obs'])
