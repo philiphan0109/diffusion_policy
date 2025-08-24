@@ -107,23 +107,38 @@ def eval_task(checkpoint, base_output_dir, device, task, num_rollouts, num_envs,
     policy.eval()
     
     # run eval
-    env_runner = hydra.utils.instantiate(
-        cfg.task.env_runner,
-        output_dir=output_dir)
-    runner_log = env_runner.run(policy)
+    try_num = 1
+    MAX_TRIES = 5
+    while try_num <= MAX_TRIES:
+        env_runner = None
+        runner_log = None
+        try:
+            env_runner = hydra.utils.instantiate(
+                cfg.task.env_runner,
+                output_dir=output_dir)
+            runner_log = env_runner.run(policy)
+        except Exception as e:
+            print(f"Excpetion in env_runner (try {try_num})")
+            print(e)
+            print()
+            continue
+        
+        break
     
     # dump log to json
-    json_log = dict()
-    for key, value in runner_log.items():
-        if isinstance(value, wandb.sdk.data_types.video.Video):
-            json_log[key] = value._path
-        else:
-            json_log[key] = value
-    out_path = os.path.join(output_dir, 'eval_log.json')
-    json.dump(json_log, open(out_path, 'w'), indent=2, sort_keys=True)
+    if runner_log is not None:
+        json_log = dict()
+        for key, value in runner_log.items():
+            if isinstance(value, wandb.sdk.data_types.video.Video):
+                json_log[key] = value._path
+            else:
+                json_log[key] = value
+        out_path = os.path.join(output_dir, 'eval_log.json')
+        json.dump(json_log, open(out_path, 'w'), indent=2, sort_keys=True)
 
     # close and delete everything
-    env_runner.close()
+    if env_runner is not None:
+        env_runner.close()
     del policy
     del workspace
 
@@ -135,14 +150,14 @@ def eval_task(checkpoint, base_output_dir, device, task, num_rollouts, num_envs,
 @click.option('-n', '--num_rollouts', default=50)
 @click.option('-e', '--num_envs', default=10)
 @click.option('-s', '--split', required=True)
-@click.option('--overwrite', is_flag=True, help='Overwrite existing evals.')
-def main(checkpoint, output_dir, device, tasks, num_rollouts, num_envs, split, overwrite):
+# @click.option('--overwrite', is_flag=True, help='Overwrite existing evals.')
+def main(checkpoint, output_dir, device, tasks, num_rollouts, num_envs, split): #, overwrite):
     if len(tasks) == 1 and tasks[0] == "atomic":
         tasks = ATOMIC_TASKS
     
     for task_i, task in enumerate(tasks):
         print(colored(f"[{task_i+1}/{len(tasks)}] running evals for {task}", "yellow"))
-        eval_task(checkpoint, output_dir, device, task, num_rollouts, num_envs, split, overwrite)
+        eval_task(checkpoint, output_dir, device, task, num_rollouts, num_envs, split, overwrite=True)
 
 if __name__ == '__main__':
     main()
