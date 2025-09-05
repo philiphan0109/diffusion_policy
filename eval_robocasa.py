@@ -125,6 +125,7 @@ def eval_task(checkpoint, base_output_dir, device, task, num_rollouts, num_envs,
             print(f"Excpetion in env_runner (try {try_num})")
             print(e)
             print()
+            try_num += 1
             continue
         
         break
@@ -158,6 +159,30 @@ def eval_task(checkpoint, base_output_dir, device, task, num_rollouts, num_envs,
 def main(checkpoint, output_dir, device, tasks, num_rollouts, num_envs, split): #, overwrite):
     if len(tasks) == 1 and tasks[0] == "atomic":
         tasks = ATOMIC_TASKS
+    if len(tasks) == 1 and tasks[0] == "composite20":
+        tasks = [
+            "ArrangeBreadBasket",
+            "BreadSelection",
+            "CategorizeCondiments",
+            "CuttingToolSelection",
+            # "DessertAssembly",
+            "GarnishPancake",
+            "GatherTableware",
+            "HeatKebabSandwich",
+            "MakeIceLemonade",
+            "PanTransfer",
+            "PortionHotDogs",
+            "PreSoakPan",
+            "PrepareCoffee",
+            "RecycleBottlesByType",
+            "RinseSinkBasin",
+            "ScrubCuttingBoard",
+            "SearingMeat",
+            "SeparateFreezerRack",
+            "SetUpCuttingStation",
+            "WaffleReheat",
+            "WashFruitColander",
+        ]
     
     for task_i, task in enumerate(tasks):
         print(colored(f"[{task_i+1}/{len(tasks)}] running evals for {task}", "yellow"))
