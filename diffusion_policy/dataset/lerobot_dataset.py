@@ -280,6 +280,12 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
             "percentile_mixing_method": "weighted_average",
         } 
         ):
+        for i in range(len(dataset_paths)):
+            if not os.path.isabs(dataset_paths[i]):
+                # hack: fill in robocasa base dataset path
+                from robocasa.macros import DATASET_BASE_PATH
+                dataset_paths[i] = os.path.join(DATASET_BASE_PATH, dataset_paths[i])
+        
         device = TorchUtils.get_torch_device(try_to_use_cuda=True)
         lang_encoder = LangUtils.LangEncoder(device=device)
         datasets = [
