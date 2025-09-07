@@ -1,4 +1,4 @@
-name: posttrain_atomic
+name: posttrain_atomic_seen
 
 shape_meta: &shape_meta
   # acceptable types: rgb, low_dim
