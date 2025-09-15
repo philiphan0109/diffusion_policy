@@ -29,6 +29,9 @@ import torch
 from typing import Dict, List
 
 
+from robocasa.utils.dataset_registry import DATASET_SOUP_REGISTRY
+
+
 from gr00t.data.dataset import LeRobotSingleDataset, LE_ROBOT_MODALITY_FILENAME, ModalityConfig, LE_ROBOT_EPISODE_FILENAME, LeRobotMixtureDataset
 import pathlib
 
@@ -54,6 +57,7 @@ class LerobotDataset(LeRobotSingleDataset, BaseImageDataset):
     def __init__(self,
             shape_meta: dict,
             dataset_path: str,
+            filter_key=None,
             horizon=1,
             pad_before=0,
             pad_after=0,
@@ -97,10 +101,10 @@ class LerobotDataset(LeRobotSingleDataset, BaseImageDataset):
             ),
         }
 
-        
         LeRobotSingleDataset.__init__(
             self,
             dataset_path=dataset_path,
+            filter_key=filter_key,
             embodiment_tag="oxe_droid",
             modality_configs=modality_configs,
         )
@@ -263,7 +267,8 @@ class LerobotDataset(LeRobotSingleDataset, BaseImageDataset):
 class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
     def __init__(self,
             shape_meta: dict,
-            dataset_paths: List[str],
+            dataset_paths: List[str] | None = None,
+            dataset_soup=None,
             horizon=1,
             pad_before=0,
             pad_after=0,
@@ -280,18 +285,31 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
             "percentile_mixing_method": "weighted_average",
         } 
         ):
-        for i in range(len(dataset_paths)):
-            if not os.path.isabs(dataset_paths[i]):
+        # exactly one of dataset_paths or dataset_soup must be defined
+        assert (dataset_paths == None) + (dataset_soup == None) == 1
+
+        if dataset_soup is not None:
+            dataset_soup_list = copy.deepcopy(DATASET_SOUP_REGISTRY[dataset_soup])
+        else:
+            dataset_soup_list = [
+                {"path": ds_path, "filter_key": None}
+                for ds_path in dataset_paths
+            ]
+
+        for i in range(len(dataset_soup_list)):
+            ds_path = dataset_soup_list[i]["path"]
+            if not os.path.isabs(ds_path):
                 # hack: fill in robocasa base dataset path
                 from robocasa.macros import DATASET_BASE_PATH
-                dataset_paths[i] = os.path.join(DATASET_BASE_PATH, dataset_paths[i])
-        
+                dataset_soup_list[i]["path"] = os.path.join(DATASET_BASE_PATH, ds_path)
+
         device = TorchUtils.get_torch_device(try_to_use_cuda=True)
         lang_encoder = LangUtils.LangEncoder(device=device)
         datasets = [
             LerobotDataset(
                 shape_meta=shape_meta,
-                dataset_path=dataset_path,
+                dataset_path=ds_meta["path"],
+                filter_key=ds_meta["filter_key"],
                 horizon=horizon,
                 pad_after=pad_after,
                 pad_before=pad_before,
@@ -304,7 +322,7 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
                 val_ratio=val_ratio,
                 lang_encoder=lang_encoder,
                 del_lang_encoder_after_init=False,
-            ) for dataset_path in dataset_paths
+            ) for ds_meta in dataset_soup_list
         ]
         del lang_encoder
         self.abs_action = abs_action
