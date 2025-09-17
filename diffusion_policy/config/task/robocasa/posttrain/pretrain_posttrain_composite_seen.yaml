@@ -1,4 +1,4 @@
-name: posttrain_composite_unseen
+name: pretrain_posttrain_composite_seen
 
 shape_meta: &shape_meta
   # acceptable types: rgb, low_dim
@@ -31,6 +31,8 @@ shape_meta: &shape_meta
     lerobot_keys: ['action.end_effector_position', 'action.end_effector_rotation', 'action.gripper_close', 'action.base_motion', 'action.control_mode',]
 
 abs_action: &abs_action False
+
+ckpt_path: /scratch/10301/snasiriany/dp_expdata/outputs/2025.09.11/16.10.56_train_diffusion_transformer_hybrid_pretrain_human300_mg60/checkpoints/epoch=1000-test_mean_score=-1.000.ckpt
 
 env_runner:
   _target_: diffusion_policy.env_runner.robomimic_image_runner.RobomimicImageRunner
@@ -76,7 +78,7 @@ env_runner:
 dataset:
   _target_: diffusion_policy.dataset.lerobot_dataset.LerobotCotrainingDataset
   shape_meta: *shape_meta
-  dataset_soup: posttrain_composite_unseen
+  dataset_soup: posttrain_composite_seen
   horizon: ${horizon}
   pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
   pad_after: ${eval:'${n_action_steps}-1'}
