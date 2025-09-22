@@ -302,6 +302,8 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
                 # hack: fill in robocasa base dataset path
                 from robocasa.macros import DATASET_BASE_PATH
                 dataset_soup_list[i]["path"] = os.path.join(DATASET_BASE_PATH, ds_path)
+            
+            dataset_soup_list[i]["ds_weight"] = dataset_soup_list[i].get("ds_weight", None)
 
         device = TorchUtils.get_torch_device(try_to_use_cuda=True)
         lang_encoder = LangUtils.LangEncoder(device=device)
@@ -329,11 +331,16 @@ class LerobotCotrainingDataset(LeRobotMixtureDataset, BaseImageDataset):
         assert not self.abs_action, "abs_action is not supported in LerobotCotrainingDataset"
         assert not ds_weights or len(ds_weights) == len(datasets), \
             f"ds_weights length {len(ds_weights)} != datasets length {len(datasets)}"
+        
+        if ds_weights is None and all(ds_meta["ds_weight"] is not None for ds_meta in dataset_soup_list):
+            ds_weights = [ds_meta["ds_weight"] for ds_meta in dataset_soup_list]
+        
         if not ds_weights:
             ds_weights = np.array([np.power(len(dataset), ds_weights_alpha) for dataset in datasets])
             # the groot dataloader requires that at least one dataset has weight 1.0
             ds_weights = ds_weights / ds_weights[0]
             print("dataset weights:", ds_weights)
+        
         dataset_mixture = list(zip(datasets, ds_weights))
         # set balance_dataset_weights to False, since we are calculating weights ourselves
         LeRobotMixtureDataset.__init__(self,  data_mixture=dataset_mixture, mode="train",  balance_dataset_weights=False, balance_trajectory_weights=False, metadata_config=metadata_config)
