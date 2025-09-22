@@ -1,4 +1,4 @@
-name: Multitask_RealOnly
+name: Multitask_Cotrain_DC
 
 shape_meta: &shape_meta
   # acceptable types: rgb, low_dim
@@ -76,7 +76,7 @@ env_runner:
 dataset:
   _target_: diffusion_policy.dataset.lerobot_dataset.LerobotCotrainingDataset
   shape_meta: *shape_meta
-  dataset_soup: real_multitask_realonly
+  dataset_soup: real_multitask_cotrainDC
   horizon: ${horizon}
   pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
   pad_after: ${eval:'${n_action_steps}-1'}

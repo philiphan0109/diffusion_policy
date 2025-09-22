@@ -76,7 +76,7 @@ env_runner:
 dataset:
   _target_: diffusion_policy.dataset.lerobot_dataset.LerobotCotrainingDataset
   shape_meta: *shape_meta
-  dataset_soup: "multitask_cotrain"
+  dataset_soup: real_multitask_cotrain301
   horizon: ${horizon}
   pad_before: ${eval:'${n_obs_steps}-1+${n_latency_steps}'}
   pad_after: ${eval:'${n_action_steps}-1'}
@@ -87,4 +87,3 @@ dataset:
   use_cache: True
   seed: 42
   val_ratio: 0.02
-  ds_weights: "multitask_cotrain"
