@@ -121,7 +121,7 @@ def main():
     parser.add_argument('-o', '--output_dir', default=None)
     parser.add_argument('-d', '--device', default='cuda:0')
     parser.add_argument('-t', '--task_set', required=True, nargs='+')
-    parser.add_argument('-n', '--num_rollouts', default=30, type=int)
+    parser.add_argument('-n', '--num_rollouts', default=50, type=int)
     parser.add_argument('-e', '--num_envs', default=5, type=int)
     parser.add_argument('-s', '--split', required=True)
     args = parser.parse_args()
