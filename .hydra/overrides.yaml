@@ -1,0 +1,8 @@
+- task=robocasa/single_task
+- logging.mode=offline
+- dataloader.batch_size=8
+- val_dataloader.batch_size=8
+- training.gradient_accumulate_every=15
+- dataloader.num_workers=4
+- val_dataloader.num_workers=4
+- training.checkpoint_every=10
